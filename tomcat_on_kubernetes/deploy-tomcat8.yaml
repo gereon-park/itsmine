@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: tomcat8
+  name: tomcat8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomcat8
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tomcat8
+    spec:
+      containers:
+      - image: arm64v8/openjdk:8
+        name: openjdk
+        command: ["/bin/sh", "-c"]
+        args:
+          - echo starting;
+            cd /data/apache-tomcat-8.5.63/bin;
+            ./startup.sh;
+            echo done;
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "384Mi"
+            cpu: "500m"
+        volumeMounts:
+          - mountPath: "/data"
+            name: pvc-volume
+      volumes:
+        - name: pvc-volume
+          persistentVolumeClaim:
+            claimName: pvc-local
+status: {}
